@@ -1,0 +1,60 @@
+server:
+  port: 8091
+spring:
+  application:
+    name: gatewayserver
+  config:
+    import: optional:configserver:http://localhost:8090/
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: false
+          #lower-case-service-id: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: "http://localhost:8080/realms/master/protocol/openid-connect/certs"
+          
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    gateway:
+      enabled: true
+  info:
+    env:
+      enabled: true
+      
+eureka:
+  instance:
+    preferIpAddress: true
+  client:
+    fetchRegistry: true
+    registerWithEureka: true
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+
+info:
+  app:
+    name: gatewayserver
+    description: Gateway Server Application
+    version: 1.0.4
+
+logging:
+  level:
+   com:
+    tus:
+     gatewayserver: DEBUG  	
+     
+resilience4j.circuitbreaker:
+    configs:
+     default:
+      slidingWindowSize: 10
+      permittedNumberOfCallsInHalfOpenState: 2
+      failureRateThreshold: 5
+      waitDurationInOpenState: 10000   	
+    
